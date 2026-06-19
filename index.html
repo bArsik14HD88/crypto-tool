@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Криптографический инструмент</title>
+  <style>
+    /* CSS3 – современный минималистичный дизайн */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: linear-gradient(145deg, #0b1a2e 0%, #1a2f3f 100%);
+      font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .app-container {
+      max-width: 1100px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 48px;
+      padding: 30px 30px 40px;
+      box-shadow: 0 30px 50px rgba(0, 0, 0, 0.7), inset 0 1px 2px rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      transition: all 0.2s ease;
+    }
+
+    h1 {
+      font-weight: 400;
+      font-size: 2.2rem;
+      letter-spacing: 2px;
+      color: #c6e2ff;
+      text-shadow: 0 2px 8px rgba(0, 20, 40, 0.6);
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 16px;
+    }
+
+    h1 small {
+      font-size: 0.9rem;
+      font-weight: 300;
+      color: #8bb3d6;
+      margin-left: auto;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 4px 16px;
+      border-radius: 30px;
+      letter-spacing: 0.3px;
+    }
+
+    .tool-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 780px) {
+      .tool-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+    }
+
+    .card {
+      background: rgba(18, 34, 50, 0.6);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border-radius: 32px;
+      padding: 22px 24px 26px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+      transition: 0.2s;
+    }
+
+    .card:hover {
+      border-color: rgba(100, 180, 255, 0.15);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
+    }
+
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: #b4d6f5;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      letter-spacing: 0.3px;
+    }
+
+    .card-title span {
+      background: rgba(70, 140, 210, 0.2);
+      padding: 0 12px;
+      border-radius: 40px;
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: #8bb8e6;
+    }
+
+    textarea, input[type="text"], input[type="password"] {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 20px;
+      padding: 14px 18px;
+      font-size: 0.95rem;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      color: #e3f0ff;
+      resize: vertical;
+      transition: 0.2s;
+      outline: none;
+      margin-bottom: 14px;
+    }
+
+    textarea:focus, input:focus {
+      border-color: #4d9eff;
+      background: rgba(0, 20, 40, 0.5);
+      box-shadow: 0 0 0 3px rgba(60, 140, 255, 0.15);
+    }
+
+    textarea::placeholder, input::placeholder {
+      color: #7f99b3;
+      font-weight: 300;
+      opacity: 0.7;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin: 8px 0 12px;
+    }
+
+    .btn {
+      background: rgba(50, 120, 200, 0.2);
+      border: 1px solid rgba(80, 160, 255, 0.25);
+      color: #d4eaff;
+      padding: 10px 20px;
+      border-radius: 40px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex: 1 0 auto;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+      letter-spacing: 0.3px;
+    }
+
+    .btn-primary {
+      background: #1a6bc4;
+      border-color: #3f8eff;
+      color: white;
+      box-shadow: 0 4px 12px rgba(30, 100, 210, 0.25);
+      flex: 1 1 120px;
+    }
+
+    .btn-primary:hover {
+      background: #2a7be0;
+      transform: scale(0.97);
+      box-shadow: 0 6px 16px rgba(30, 100, 255, 0.3);
+    }
+
+    .btn-secondary {
+      background: rgba(40, 60, 90, 0.5);
+      border-color: rgba(160, 190, 220, 0.2);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(60, 100, 150, 0.5);
+      border-color: #6b9ed0;
+    }
+
+    .btn-danger {
+      background: rgba(200, 60, 70, 0.25);
+      border-color: rgba(230, 80, 90, 0.3);
+      color: #f7b0b0;
+    }
+
+    .btn-danger:hover {
+      background: rgba(210, 70, 80, 0.35);
+      border-color: #e6656e;
+    }
+
+    .key-badge {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 30px;
+      padding: 6px 14px;
+      font-size: 0.7rem;
+      color: #acccf0;
+      border: 1px dashed rgba(255, 255, 255, 0.08);
+      word-break: break-all;
+      font-family: monospace;
+      margin-top: 6px;
+      display: inline-block;
+      max-width: 100%;
+    }
+
+    .result-box {
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 24px;
+      padding: 14px 18px;
+      margin-top: 16px;
+      border-left: 3px solid #3f8eff;
+      color: #d4eaff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      word-break: break-all;
+      max-height: 140px;
+      overflow-y: auto;
+    }
+
+    .hash-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .hash-row .btn {
+      flex: 1 1 80px;
+    }
+
+    .key-mgmt {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .key-mgmt .btn {
+      flex: 0 1 auto;
+    }
+
+    .footer-notes {
+      margin-top: 28px;
+      color: #6b8aa8;
+      font-size: 0.8rem;
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      padding-top: 22px;
+      letter-spacing: 0.3px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .footer-notes span {
+      background: rgba(0, 0, 0, 0.2);
+      padding: 3px 12px;
+      border-radius: 24px;
+    }
+
+    .status-indicator {
+      color: #98c1e0;
+      font-size: 0.85rem;
+    }
+
+    /* скролл */
+    ::-webkit-scrollbar {
+      width: 4px;
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2b6b9e;
+      border-radius: 12px;
+    }
+  </style>
+</head>
+<body>
+<div class="app-container">
+  <h1>
+    🔐 Крипто-инструмент
+    <small>v1.0 · ES6+</small>
+  </h1>
+
+  <div class="tool-grid">
+    <!-- ========== ШИФРОВАНИЕ AES (симметричное) ========== -->
+    <div class="card">
+      <div class="card-title">
+        <span>🔑</span> AES-GCM шифрование
+        <span>симметричное</span>
+      </div>
+      <textarea id="plainText" rows="2" placeholder="Введите текст для шифрования...">Привет, мир!</textarea>
+      <div class="row">
+        <input type="password" id="aesKeyInput" placeholder="Ключ (пароль)" value="mySecretKey123" style="flex:2;">
+        <button class="btn btn-primary" id="encryptBtn">🔒 Шифровать</button>
+        <button class="btn btn-secondary" id="decryptBtn">🔓 Расшифровать</button>
+      </div>
+      <div class="result-box" id="aesResult">Результат появится здесь</div>
+      <div class="key-mgmt">
+        <button class="btn btn-secondary" id="saveAesKeyBtn">💾 Сохранить ключ</button>
+        <button class="btn btn-secondary" id="loadAesKeyBtn">📂 Загрузить ключ</button>
+        <button class="btn btn-danger" id="clearAesKeyBtn">🗑️ Очистить</button>
+        <span class="key-badge" id="aesKeyStatus">(ключ не сохранён)</span>
+      </div>
+    </div>
+
+    <!-- ========== ХЕШИРОВАНИЕ SHA-256 ========== -->
+    <div class="card">
+      <div class="card-title">
+        <span>🧬</span> Хеш-функция
+        <span>SHA-256</span>
+      </div>
+      <textarea id="hashInput" rows="2" placeholder="Текст для хеширования...">Хешируй меня</textarea>
+      <div class="hash-row">
+        <button class="btn btn-primary" id="hashBtn">⚡ Вычислить SHA-256</button>
+        <button class="btn btn-secondary" id="hashWithSaltBtn">🧂 С солью (HMAC)</button>
+      </div>
+      <div class="result-box" id="hashResult">Хеш будет здесь</div>
+      <div class="key-mgmt" style="border-top: 1px solid rgba(255,255,255,0.04); margin-top: 16px;">
+        <input type="password" id="hmacSaltInput" placeholder="Соль для HMAC" value="s3cr3tSalt" style="flex:2; margin-bottom:0;">
+        <span style="color:#8bb3d6; font-size:0.8rem; margin-left:6px;">(соль хранится в LocalStorage)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Дополнительный блок: управление ключами и статус -->
+  <div class="footer-notes">
+    <span>💡 Данные хранятся в <strong>LocalStorage</strong> (ключи, соль)</span>
+    <span id="storageStatus">📦 0 элементов</span>
+  </div>
+</div>
+
+<script>
+  (function() {
+    "use strict";
+
+    // --- вспомогательные функции ---
+    const $ = (id) => document.getElementById(id);
+    const encode = (data) => new TextEncoder().encode(data);
+    const decode = (buf) => new TextDecoder().decode(buf);
+
+    // --- элементы AES ---
+    const plainText = $('plainText');
+    const aesKeyInput = $('aesKeyInput');
+    const aesResult = $('aesResult');
+    const encryptBtn = $('encryptBtn');
+    const decryptBtn = $('decryptBtn');
+    const saveAesKeyBtn = $('saveAesKeyBtn');
+    const loadAesKeyBtn = $('loadAesKeyBtn');
+    const clearAesKeyBtn = $('clearAesKeyBtn');
+    const aesKeyStatus = $('aesKeyStatus');
+
+    // --- элементы хеша ---
+    const hashInput = $('hashInput');
+    const hashResult = $('hashResult');
+    const hashBtn = $('hashBtn');
+    const hashWithSaltBtn = $('hashWithSaltBtn');
+    const hmacSaltInput = $('hmacSaltInput');
+
+    const storageStatus = $('storageStatus');
+
+    // ========== 1. Управление ключами в LocalStorage ==========
+    const LS_AES_KEY = 'crypto_tool_aes_key';
+    const LS_HMAC_SALT = 'crypto_tool_hmac_salt';
+
+    function updateAesKeyStatus() {
+      const stored = localStorage.getItem(LS_AES_KEY);
+      if (stored) {
+        aesKeyStatus.textContent = `🔑 ключ сохранён (${stored.length > 20 ? stored.substring(0,16)+'…' : stored})`;
+        aesKeyStatus.style.borderColor = '#3f8eff';
+      } else {
+        aesKeyStatus.textContent = '⛔ ключ не сохранён';
+        aesKeyStatus.style.borderColor = 'rgba(255,255,255,0.08)';
+      }
+      updateStorageStatus();
+    }
+
+    function updateStorageStatus() {
+      const count = localStorage.length;
+      storageStatus.textContent = `📦 ${count} элемент${count !== 1 ? 'ов' : ''} в LocalStorage`;
+    }
+
+    // Сохранить ключ AES
+    saveAesKeyBtn.addEventListener('click', () => {
+      const key = aesKeyInput.value.trim();
+      if (!key) {
+        aesResult.textContent = '⚠️ Введите ключ для сохранения';
+        return;
+      }
+      try {
+        localStorage.setItem(LS_AES_KEY, key);
+        updateAesKeyStatus();
+        aesResult.textContent = `✅ Ключ сохранён (${key.length} симв.)`;
+      } catch (e) {
+        aesResult.textContent = `❌ Ошибка сохранения: ${e.message}`;
+      }
+    });
+
+    // Загрузить ключ AES
+    loadAesKeyBtn.addEventListener('click', () => {
+      const stored = localStorage.getItem(LS_AES_KEY);
+      if (stored) {
+        aesKeyInput.value = stored;
+        aesResult.textContent = `🔓 Ключ загружен (${stored.length} симв.)`;
+        updateAesKeyStatus();
+      } else {
+        aesResult.textContent = '❌ Ключ не найден в LocalStorage';
+      }
+    });
+
+    // Очистить ключ AES
+    clearAesKeyBtn.addEventListener('click', () => {
+      localStorage.removeItem(LS_AES_KEY);
+      aesKeyInput.value = '';
+      updateAesKeyStatus();
+      aesResult.textContent = '🧹 Ключ удалён из хранилища';
+    });
+
+    // ========== 2. AES-GCM шифрование / дешифрование ==========
+    async function encryptAES(plain, password) {
+      const enc = new TextEncoder();
+      const keyMaterial = await crypto.subtle.importKey(
+        'raw',
+        enc.encode(password),
+        { name: 'PBKDF2' },
+        false,
+        ['deriveKey']
+      );
+      const salt = crypto.getRandomValues(new Uint8Array(16));
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const key = await crypto.subtle.deriveKey(
+        { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
+        keyMaterial,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['encrypt']
+      );
+      const encrypted = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv },
+        key,
+        enc.encode(plain)
+      );
+      // объединяем salt + iv + ciphertext
+      const combined = new Uint8Array(salt.length + iv.length + encrypted.byteLength);
+      combined.set(salt, 0);
+      combined.set(iv, salt.length);
+      combined.set(new Uint8Array(encrypted), salt.length + iv.length);
+      return btoa(String.fromCharCode(...combined));
+    }
+
+    async function decryptAES(encoded, password) {
+      const combined = Uint8Array.from(atob(encoded), c => c.charCodeAt(0));
+      const salt = combined.slice(0, 16);
+      const iv = combined.slice(16, 28);
+      const ciphertext = combined.slice(28);
+      const enc = new TextEncoder();
+      const keyMaterial = await crypto.subtle.importKey(
+        'raw',
+        enc.encode(password),
+        { name: 'PBKDF2' },
+        false,
+        ['deriveKey']
+      );
+      const key = await crypto.subtle.deriveKey(
+        { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
+        keyMaterial,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['decrypt']
+      );
+      const decrypted = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv },
+        key,
+        ciphertext
+      );
+      return new TextDecoder().decode(decrypted);
+    }
+
+    encryptBtn.addEventListener('click', async () => {
+      const text = plainText.value || ' ';
+      const password = aesKeyInput.value.trim();
+      if (!password) {
+        aesResult.textContent = '⚠️ Введите пароль/ключ';
+        return;
+      }
+      try {
+        const encrypted = await encryptAES(text, password);
+        aesResult.textContent = encrypted;
+      } catch (err) {
+        aesResult.textContent = `❌ Ошибка шифрования: ${err.message}`;
+      }
+    });
+
+    decryptBtn.addEventListener('click', async () => {
+      const cipher = aesResult.textContent;
+      const password = aesKeyInput.value.trim();
+      if (!password) {
+        aesResult.textContent = '⚠️ Введите пароль/ключ';
+        return;
+      }
+      if (!cipher || cipher === 'Результат появится здесь' || cipher.startsWith('⚠️') || cipher.startsWith('✅') || cipher.startsWith('❌')) {
+        aesResult.textContent = '⚠️ Нет зашифрованных данных для расшифровки';
+        return;
+      }
+      try {
+        const decrypted = await decryptAES(cipher, password);
+        aesResult.textContent = `🔓 ${decrypted}`;
+      } catch (err) {
+        aesResult.textContent = `❌ Ошибка расшифровки: ${err.message}`;
+      }
+    });
+
+    // ========== 3. SHA-256 хеш + HMAC ==========
+    async function sha256(message) {
+      const data = new TextEncoder().encode(message);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    async function hmacSha256(message, secret) {
+      const enc = new TextEncoder();
+      const key = await crypto.subtle.importKey(
+        'raw',
+        enc.encode(secret),
+        { name: 'HMAC', hash: 'SHA-256' },
+        false,
+        ['sign']
+      );
+      const sig = await crypto.subtle.sign('HMAC', key, enc.encode(message));
+      const hashArray = Array.from(new Uint8Array(sig));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    hashBtn.addEventListener('click', async () => {
+      const text = hashInput.value || ' ';
+      try {
+        const hash = await sha256(text);
+        hashResult.textContent = hash;
+      } catch (e) {
+        hashResult.textContent = `❌ Ошибка: ${e.message}`;
+      }
+    });
+
+    hashWithSaltBtn.addEventListener('click', async () => {
+      const text = hashInput.value || ' ';
+      let salt = hmacSaltInput.value.trim();
+      if (!salt) {
+        hashResult.textContent = '⚠️ Введите соль или загрузите сохранённую';
+        return;
+      }
+      // сохраняем соль в LocalStorage при использовании
+      try {
+        localStorage.setItem(LS_HMAC_SALT, salt);
+      } catch (e) {}
+      try {
+        const hmac = await hmacSha256(text, salt);
+        hashResult.textContent = `HMAC-SHA256: ${hmac}`;
+      } catch (e) {
+        hashResult.textContent = `❌ Ошибка HMAC: ${e.message}`;
+      }
+    });
+
+    // Загрузка соли из LocalStorage при старте (если есть)
+    (function loadHmacSalt() {
+      const storedSalt = localStorage.getItem(LS_HMAC_SALT);
+      if (storedSalt) {
+        hmacSaltInput.value = storedSalt;
+      }
+    })();
+
+    // Инициализация статусов
+    updateAesKeyStatus();
+    updateStorageStatus();
+
+    // Доп. обновление статуса при изменении LocalStorage (вручную)
+    window.addEventListener('storage', (e) => {
+      if (e.key === LS_AES_KEY) updateAesKeyStatus();
+      if (e.key === LS_HMAC_SALT) {
+        const val = localStorage.getItem(LS_HMAC_SALT);
+        if (val) hmacSaltInput.value = val;
+      }
+      updateStorageStatus();
+    });
+
+    // подсказка для демонстрации: предзаполненный пример
+    // (если поле пустое, ставим демо-текст)
+    if (!plainText.value) plainText.value = 'Привет, мир!';
+    if (!hashInput.value) hashInput.value = 'Хешируй меня';
+
+    // Обновление статуса при любых изменениях в localStorage (для кнопок)
+    document.addEventListener('click', () => {
+      // ленивое обновление, но достаточно
+      setTimeout(() => { updateStorageStatus(); }, 50);
+    });
+
+  })();
+</script>
+</body>
+</html>
